@@ -5,18 +5,19 @@ import br.com.douglasmotta.whitelabeltutorial.data.ProductRepository
 import br.com.douglasmotta.whitelabeltutorial.domain.model.Product
 import java.lang.Exception
 import java.util.*
+import javax.inject.Inject
 
-class CreateProductUseCaseImpl(
+class CreateProductUseCaseImpl @Inject constructor(
     private val productRepository: ProductRepository,
     private val uploadProductImageUseCase: UploadProductImageUseCase
-): CreateProductUseCase {
+) : CreateProductUseCase {
 
     override suspend fun invoke(description: String, price: Double, imageUri: Uri): Product {
         return try {
             val imageUrl = uploadProductImageUseCase(imageUri)
             val product = Product(UUID.randomUUID().toString(), description, price, imageUrl)
             productRepository.createProduct(product)
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             throw e
         }
     }
